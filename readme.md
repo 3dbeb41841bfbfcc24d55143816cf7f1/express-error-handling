@@ -1,10 +1,42 @@
-# Error Handling in JavaScript
+# Error Handling in Express
 
-test-errors-1.js:
+## Introduction
+
+Q: What can go wrong in an Express app?
+A: Everything
+
+There are different kinds of errors:
+
+* Software Bugs
+  - infinite loop
+  - unrecognized route
+  - race condition
+* System Failures
+  - hard drive storage is full
+  - network failure
+  - database connection failure
+  - out of memory error
+* User Errors
+  - user entered wrong login or password
+  - user entered bad data (bad zip code, SSN, Credit Card #, etc.)
+
+## Separation of Concerns
+
+It is important to note that we often need to separate out the _detection_ of an error from the _handling_ of the error. One part of our code may detect the error and another part of our code may need to report on errors. How do we pass the error from the _detection_ code to the _error handler_?
+
+First lets see how this is done as part of the JavaScript language.
+
+## JavaScript Errors and Exception Handling
+
+JavaScript provides the `throw`, `try`, and `catch` keywords for throwing, and handling exceptions. An _exception_ is an error that is being reported in a way that aborts the current flow of execution and unwinds the call stack looking for an _exception handler_ designated by the `try` and `catch` blocks. This is called "throwing an exception".
+
+Let's look at an example:
+
+ex1.js:
 
 ```javascript
 function foo(data) {
-  var sum = data.x();
+  var sum = data.x() + data.y();
   console.log('sum =', sum);
 }
 
@@ -18,43 +50,16 @@ try {
 }
 catch(error) {
   var message = 'Oopsy, something went wrong:' + error;
-  throw new Error(message);
+  console.log(message);
+  // throw new Error(message);
 }
 
 console.log('we do get here');
 ```
 
-test-errors-2.js:
+In the above example the JavaScript runtime engine detected an error while executing the 2nd line of the `foo` function. The JavaScript runtime then _threw_ an exception describing the error that occurred. We caught that exception in the `catch` block and printed the error to the console.
 
-```javascript
-function testError(err) {
-  try {
-    throw err;
-  }
-  catch (error) {
-    console.log('ERROR:', error);
-  }
-}
-
-testError("An error has occurred");
-testError(true);
-testError(new Error("I detect an error!"));
-testError(new SyntaxError("Your syntax is no good"));
-```
-
-
-# Error Handling in Express
-
-## Reading
-
-* [Proper Error Handling in ExpressJS](http://derickbailey.com/2014/09/06/proper-error-handling-in-expressjs-route-handlers/)
-* [Error Handling in Node.js](https://www.joyent.com/developers/node/design/errors)
-* [Express Error Handling](http://expressjs.com/guide/error-handling.html)
-* [debug](https://www.npmjs.com/package/debug)
-* [Error Handler Module](https://github.com/expressjs/errorhandler)
-
-
-## Introduction to Errors and Exceptions
+## Errors vs. Exceptions
 
 In JavaScript (and Node.js especially), there's a difference between an _error_ and an _exception_. An _error_ is any instance of the `Error` class. Errors may be constructed and then passed directly to another function or thrown. When you `throw` an _error_, it becomes an _exception_
 
@@ -71,6 +76,13 @@ callback(new Error('something bad happened'));
 ```
 
 and this is much more common in Node because most errors are _asynchronous_.
+
+
+## Error Handling in Express
+
+Express uses _middleware_ to handle asynchronous requests and responses. Express gives us a way to plug into the middleware pipeline an error handler that will get called whenever an error is detected.
+
+
 
 
 ## Error Handler Middleware
@@ -205,7 +217,7 @@ when we hit the `/todos` route, we will see the following in the Terminal output
   todos:app You found the INDEX route for todos! +42s
 ```
 
-> NOTE: The above output will only print if the DEBUG flag contains the pattern "todos:router" or "todos:*"
+> NOTE: The above output will only print if the DEBUG flag contains a matching pattern, for example: "todos:router" or "todos:*" or "*"
 
 
 ## Running in Development or Production Mode
@@ -221,8 +233,29 @@ Add this to the bottom of `app.js` just above the line `module.exports = app;`:
 debug('Running in %s mode', app.get('env'));
 ```
 
-## Questions
+## Summary
 
-* How to set the error status code
-* How to use `new Error`
+* Most modern programming languages (including JavaScript) support the detection and reporting of errors via _exceptions_.
+* Exceptions work well for synchronous error handling, but it does not work well when we are running asynchronously.
+* For async error handling we need to use callbacks.
+* Express provides a way of connecting callbacks into a _middleware_ pipeline.
+* Express error handlers are simply middleware that are defined to take 4 arguments instead of 3: (err, req, res, next)
+* We can pass an error down the _middleware_ pipeline by calling `next`:
+
+```javascript
+currentUser.save()
+.then(function(saved) {
+  res.redirect('/todos');
+}, function(err) {
+  return next(err);         // pass the error down the middleware pipeline
+});
+```
+
+## For Further Reading
+
+* [Proper Error Handling in ExpressJS](http://derickbailey.com/2014/09/06/proper-error-handling-in-expressjs-route-handlers/)
+* [Error Handling in Node.js](https://www.joyent.com/developers/node/design/errors)
+* [Express Error Handling](http://expressjs.com/guide/error-handling.html)
+* [debug](https://www.npmjs.com/package/debug)
+* [Error Handler Module](https://github.com/expressjs/errorhandler)
 
