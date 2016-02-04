@@ -223,15 +223,17 @@ when we hit the `/todos` route, we will see the following in the Terminal output
 ## Running in Development or Production Mode
 
 ```bash
-nodemon                     # run in development mode
-NODE_ENV=production nodemon # run in production mode
+npm start                     # run in development mode
+NODE_ENV=production npm start # run in production mode
 ```
 
-Add this to the bottom of `app.js` just above the line `module.exports = app;`:
+You can add the following line to the bottom of your `app.js` just above the line `module.exports = app;`:
 
 ```javascript
 debug('Running in %s mode', app.get('env'));
 ```
+
+Now when you start the app it will print out what mode you are currently using.
 
 ## Summary
 
@@ -270,6 +272,6 @@ currentUser.save()
 * [Proper Error Handling in ExpressJS](http://derickbailey.com/2014/09/06/proper-error-handling-in-expressjs-route-handlers/)
 * [Error Handling in Node.js](https://www.joyent.com/developers/node/design/errors)
 * [Express Error Handling](http://expressjs.com/guide/error-handling.html)
-* [debug](https://www.npmjs.com/package/debug)
+* [The debug module](https://www.npmjs.com/package/debug)
 * [Error Handler Module](https://github.com/expressjs/errorhandler)
 
