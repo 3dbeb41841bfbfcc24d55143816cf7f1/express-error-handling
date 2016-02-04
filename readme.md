@@ -235,6 +235,20 @@ debug('Running in %s mode', app.get('env'));
 
 ## Summary
 
+* Express provides a `debug` module for defining named debug loggers:
+
+```javascript
+var debug = require('debug')('todos:app');
+...
+debug('Here is a debug message');
+```
+
+* We can enable and disable various `debug` loggers via the `DEBUG` variable:
+
+```bash
+DEBUG=express:router,todos:* npm start
+```
+
 * Most modern programming languages (including JavaScript) support the detection and reporting of errors via _exceptions_.
 * Exceptions work well for synchronous error handling, but it does not work well when we are running asynchronously.
 * For async error handling we need to use callbacks.
