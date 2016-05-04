@@ -271,7 +271,6 @@ currentUser.save()
 
 * [Proper Error Handling in ExpressJS](http://derickbailey.com/2014/09/06/proper-error-handling-in-expressjs-route-handlers/)
 * [Error Handling in Node.js](https://www.joyent.com/developers/node/design/errors)
-* [Express Error Handling](http://expressjs.com/guide/error-handling.html)
+* [Express Error Handling](http://expressjs.com/en/guide/error-handling.html)
 * [The debug module](https://www.npmjs.com/package/debug)
 * [Error Handler Module](https://github.com/expressjs/errorhandler)
-
